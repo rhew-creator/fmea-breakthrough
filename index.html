@@ -671,11 +671,11 @@
       <input type="text" id="apiKey" placeholder="sk-ant-api03-..." />
     </div>
     <div class="input-group">
-      <label>과거 FMEA DB (Excel/CSV)</label>
-      <div class="file-upload" id="fileDropZone" onclick="document.getElementById('fileInput').click()">
-        <div class="file-icon">📊</div>
-        <p id="fileLabel">클릭하거나 파일을 드래그하여 업로드</p>
-        <input type="file" id="fileInput" accept=".xlsx,.xls,.csv" onchange="handleFile(this)">
+      <label>과거 FMEA DB</label>
+      <div class="file-upload has-file" style="cursor:default;">
+        <div class="file-icon">✅</div>
+        <p style="color:var(--accent3); font-weight:600;">BMW DFMEA DB 내장됨 — 업로드 불필요</p>
+        <p style="font-size:11px; margin-top:4px;">Injection / Thermal / Assembly / Photometry / Wire / Appearance / Marking 전체 포함</p>
       </div>
     </div>
   </div>
@@ -771,8 +771,170 @@
 
 <script>
 let selectedHyp = '';
-let uploadedFileName = '';
-let uploadedFileContent = '';
+let uploadedFileName = 'BMW_DFMEA_DB (내장됨)';
+
+// ✅ 과거 FMEA DB 내장 (매번 업로드 불필요)
+const EMBEDDED_DB = `
+=== 자동차 램프 FMEA DB (카테고리별 고장모드) ===
+
+[Injection 카테고리]
+- Gate 위치 → Bezel 뜯겨짐/scratch
+- Side Gate → 외관 노출
+- Base thickness 불균일
+- Die-pull angle 미고려
+- 변형/파손 방지 구조(deformation & breakage prevention) 미적용
+- 사출 후 Appearance 불량: air trap, sink, silver line, weld line, Flow mark, scratch, whitening, irregular grain surface
+- weld line/Slide line 시인성 문제
+- Parting(sharp-edge) 외관 노출
+- ESD 방지 구조 미고려
+- Al Coating 반사면 Sink 발생
+- Al Coating Appearance: Non-deposition, Over-deposition
+- 2K Color 경계 Incomplete bonding
+- 2K OVERLAY 경계 Visual inconsistency
+- Short shot 방지 구조 미고려
+- gate 부 크랙
+- Draft angle 취출 불충분
+
+[Thermal 카테고리]
+- 온도에 따른 discoloration/deformation (태양광 포함)
+- HDT(열변형온도) Temperature 조건 미고려
+- Heat dissipation 영역 부족
+- thermal expansion에 의한 Lamp 파손
+
+[Assembly-Housing 카테고리]
+- Label/Barcode 부착 위치 시인성
+- Vent Patch 물막이 구조
+- Gasket/RPS PAD/Connector/Vent patch 표면거칠기 규제
+- Hole Screw 토크 범위
+- Hole Screw 축 흔들림
+- X/Y Screw Gap/Flush 체결력
+- 온도 공정 미준수(Label/Vent Patch/Gasket/RPS PAD)
+- Bulb socket/Flange 오조립
+- Flange 간섭/Gap/flush
+- Gasket depression ratio & location
+- M4 Screw seal pad 누락
+- M4 screw Tool access 미확보
+- Water pooling
+- Overslam
+- 6-way assembly
+- Dust cover 이탈
+- 벌레 유입(Connector/Bulb socket)
+- RPS PAD 이탈
+- Dust cover/Desiccant 완조립 확인 리브
+
+[Photometry 카테고리]
+- light spotting 방지 구조
+- 내부 조립부 노출(점등/비점등)
+- reflectivity 부적절
+- light leakage
+- dark area
+- grain specification & thickness
+- available reflection area
+- Requirement(Failure behavior, cd Value)
+- brightness difference(IN/OUT)
+- Hot spot(Light guide 꺾임부/끝단부)
+- Hot spot(Solid bar 끝단부)
+- light distortion(Skin 곡률)
+- Exposed assembly area(Solid bar 측벽)
+- SAE Light-emitting Area(Stop/Turn)
+- 3-5 ratio(Tail/Stop)
+- visible optics 거리 최적화
+- red light regulation(ECE)
+- Error proof(SML/SMR)
+- dark area(multi-focus optic)
+- snap fit hole/exothermal hole 누광
+- exothermal hole 벌레유입
+- ECE stop & turn 배치 법규
+- complementary color 법규
+- AMECA list 등재 재질
+
+[Assembly-Wire/ELEC 카테고리]
+- Wire 경로 EMC 영향
+- Wire fix structure 위치
+- Connector 조립성/고객요구사항
+- Connector POKE-YOKE
+- Wire 길이/굵기 Conflict
+- LED Connector Pin Map 불일치
+- Dust cap interference
+- Wire assembly space
+- CCE 역조립/EMC/Connector 탈거
+- Thermal glue 테두리 형상
+- Heat plate 가조립 형상
+- PCB 색상 외관 노출
+- ESD short
+- Thermal Pad 과압착 short
+- 전자소자 간섭 burnout
+- 진동/충격 displacement
+- F-PCB bending 응력 burnout
+- F-PCB 길이 부족 tearing
+- 지역/사양별 PCB Poke-Yoke
+- LED/전자소자 내열 burnout
+- CCE Connector 빠짐 방지 리브
+
+[Multiple Product 부품간 조립]
+- Hook hole 구조(X/Y/Z방향)
+- Hook 구조(X/Y/Z방향)
+- T/Screw hole 구조(X/Y/Z방향)
+- T/Screw 구조(X/Y/Z방향)
+- 조립 gap
+- Touch rib(누광방지)
+- 유동/분진/간섭 gap
+- 진동/충격 damage/detachment
+- 조립 후 deformation
+- 지역/사양별 Poke-Yoke
+
+[Moisture Management 카테고리]
+- Outer Lens 표면 condensation 제거
+- 내부 통기면적 부족 condensation
+- LAMP 통기성 부족 condensation
+- watertight 부품 안착면 표면거칠기
+- Lamp grommet 수분 유입
+- 고압세차 Lamp-PNL 수분 유입
+
+[Appearance 카테고리]
+- Label/Vent Patch/Gasket/RPS PAD/Barcode 시인성
+- Bezel-Outer Lens Slide line 일치성
+- OS(T1)-IS(T2) Design line 일치성
+- gate 위치(scratch/tearing)
+- Outer Lens 경계 누광(multi color)
+- PCB 색상 외관 노출
+- Parting(sharp-edge) 노출
+- 사출 Appearance 노출
+- snap fit hole/exothermal hole 누광
+- 벌레유입(Connector wiring/Bulb socket)
+- Slide line/Weld line 시인성
+- Welding burr 외부 노출
+- 태양광 discoloration/deformation
+- Outer Lens-Housing 융착 visual inconsistency
+- side gate 외관 노출
+- 점등/비점등 내부조립부 노출
+- adhesive tape 외관 노출
+- EMBLEM 고객요구사항
+- Flange-MTG cover visual inconsistency
+- L/R 일체형 분리구간 노출
+- Outer Lens Washer fluid 크랙
+- Outer Lens gate 크랙
+
+[Marking & Regulation 카테고리]
+- 지역별 Marking 법규/사이즈 미준수
+- 지역별 필수 Marking 누락
+- Marking 식별 어려움
+- Marking 평평한 면 미위치
+- Trunk open 시 인증 Marking 미식별
+- 원산지 Marking 누락
+- 공급사 Marking 누락
+- 전자 관련 Marking 누락
+- 환경규제 Marking 누락
+- 교환가능 광원 Marking 누락
+- 복수 인증번호 구분 미적용
+- SAE Light-emitting Area(Stop/Turn)
+- 3-5 ratio(Tail)
+- ECE stop & turn 배치 법규
+- complementary color 법규
+- AMECA list 미등재
+`;
+
+let uploadedFileContent = EMBEDDED_DB;
 
 function selectHyp(btn, label) {
   document.querySelectorAll('.hyp-btn').forEach(b => b.classList.remove('selected'));
